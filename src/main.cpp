@@ -2,8 +2,7 @@
 #include <fstream>
 #include <string>
 #include <queue>
-#include "../lib/huffman_node.h"
-
+#include <unordered_map>
 
 typedef struct MinHeapElement{
             char byte;
@@ -113,6 +112,120 @@ class SimpleMinHeap {
         
 };
 
+/**
+ * Compressor test: A test class that behaves like a Huffman compressor
+ * HuffmanCompressor pops the elements of the priority queue and creates a tree, after that, creates a table containing huffman codes
+ * 
+ * Step 1: Create tree
+ * Step 2: Create table
+ * Step 3: Compress file
+ * Step 4: Send ...
+ */
+
+class HuffmanCompressor {
+    private:
+        
+        // HuffmanNode without byte -> byte = -1
+        typedef struct HuffmanNode {
+            char byte;
+            int frequency;
+            HuffmanNode* left;
+            HuffmanNode* right;
+
+            HuffmanNode() {
+                left = right = nullptr;
+            }
+
+            HuffmanNode(char byte, int frequency) {
+                this->byte = byte;
+                this->frequency = frequency;
+                left = right = nullptr;
+            }
+
+            HuffmanNode* getLeft() {
+                return left;
+            }
+
+            HuffmanNode* getRight() {
+                return right;
+            }
+        }HuffmanNode;
+
+        SimpleMinHeap heap;
+        HuffmanNode* root;
+        std::unordered_map<char, std::string> table;
+
+    public:
+        HuffmanCompressor() {
+            this->heap = heap;
+            root = nullptr;
+        }
+
+        void createTree() {
+            // First iteration
+            HuffmanNode* z = new HuffmanNode(-1, 0);
+            MinHeapElement a = heap.pop();
+            MinHeapElement b = heap.pop();
+
+            z->frequency = a.frequency + b.frequency;
+
+            z->left = new HuffmanNode(a.byte, a.frequency);
+            z->right = new HuffmanNode(b.byte, b.frequency);
+
+            root = z;
+
+            // Other iterations
+            while (heap.size() != 0) {
+                z = new HuffmanNode(-1, 0);
+                a = heap.pop();
+                z->right = root;
+                z->left = new HuffmanNode(a.byte, a.frequency);
+                z->frequency = a.frequency + root->frequency;
+                root = z;
+            }
+            
+        }
+
+        /**
+         * Crea el Map de (bytes, codificación Huffman)
+         */
+
+        void createHuffmanTable() {
+            std::string encoding = "";
+
+            // Traverse tree, and get Huffman codes
+
+            HuffmanNode* aux = root;
+
+            while (aux->left != nullptr) {
+                table[aux->left->byte] = encoding + "0";
+
+                if (aux->right->byte != -1) {
+                    table[aux->right->byte] = encoding + "1";
+                }
+
+                encoding+="1";
+                aux = aux->right;
+            }
+        }
+
+        // Encode file and output encoding
+
+        void encode() { 
+            
+        }
+        
+};
+
+
+
+
+
+
+
+
+
+
 
 int main(void) {
 
@@ -152,7 +265,6 @@ int main(void) {
     }
 
     while (minHeap.size() != 0) {
-        minHeap.heapify();
         MinHeapElement elem = minHeap.pop();
         std::cout << elem.byte << ": " << elem.frequency << std::endl;
     }
@@ -161,9 +273,3 @@ int main(void) {
 
     return 0;
 }
-
-// Min Heap functionalities
-/**
- * The min heap consists of a vector (The min Heap) and three functions: "insert", "swap" (private), "heapify"
- */
-
