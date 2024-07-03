@@ -12,7 +12,7 @@
 #define MAX_NODE_ARRAY_LENGTH 128
 
 class Huffman {
-    private:
+    protected:
         std::string source;
         TreeNode* node_array[MAX_NODE_ARRAY_LENGTH];
         int node_array_size;
@@ -25,8 +25,9 @@ class Huffman {
 
         void create_tree();
         void create_priority_queue();
+        void insert_into_array(TreeNode* tn);
 
-        void clear();
+        void clear(); // TODO
 };
 
 #endif // HUFFMAN_H_

@@ -77,6 +77,11 @@ void Huffman::create_priority_queue() {
     #endif
 }
 
-void clear() {
+void Huffman::insert_into_array(TreeNode* tn) {
+    node_array[node_array_size] = tn;
+    node_array_size++;
+}
 
+void Huffman::clear() {
+    // TODO
 }

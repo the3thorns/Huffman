@@ -6,28 +6,22 @@
 #include <string>
 #include <queue>
 // #include <array>
+#include "huffman.h"
 #include "tree_node.h"
-
-// Macro used to compile debug statements
-#define DEBUG
-
-// Maximum of 128 TreeNode pointers
-#define MAX_NODE_ARRAY_LENGTH 128
 
 /**
  * Left: 0
  * Right: 1
  */
 
-class HuffmanCompressor {
-    private:
-        std::string source;
-        TreeNode* node_array[MAX_NODE_ARRAY_LENGTH];
-        int node_array_size;
-        std::priority_queue<TreeNode*, std::vector<TreeNode*>, CompareTreeNode> priority_queue;
-        std::unordered_map<char, std::string> huffman_table;
-        TreeNode* root;
+/**
+ * TODO Optimizar gestión de memoria en node_array
+ */
 
+class HuffmanCompressor : public Huffman {
+    private:
+        std::unordered_map<char, std::string> huffman_table;
+        
         void create_huffman_table(TreeNode* node, std::string code);
 
     public:
@@ -39,8 +33,6 @@ class HuffmanCompressor {
 
         // void insert_into_array(TreeNode* ptr);
 
-        void create_tree();
-        void create_priority_queue();
         void create_huffman_table();
 
         /**
@@ -50,11 +42,6 @@ class HuffmanCompressor {
          * Step 4: output the encoded file into a compressed one (compressed.huf)
          */
         void encode(std::string source);
-
-        /**
-         * Frees all memory from the heap
-         */
-        void clear();
 };
 
 
