@@ -21,13 +21,14 @@ HuffmanCompressor::~HuffmanCompressor() {
 
 // Recursive algorithm
 void HuffmanCompressor::create_huffman_table() { // WORKS
-    if (root != nullptr){
+    if (root != nullptr) {
         create_huffman_table(root, "");
 
         #ifdef DEBUG
             for (const auto &keyValue : huffman_table) {
                 std::cout << keyValue.first << ": " << keyValue.second << std::endl;
             }
+            std::cout << std::endl;
         #endif
     }
 }
@@ -58,22 +59,35 @@ void HuffmanCompressor::encode(std::string source) {
     output.open("Encoded.huf", std::ios::out | std::ios::binary);
 
     char byte_readed;
-    unsigned char byte_writed = 0;
-    int byte_size = 0;
 
     /**
      * ==Header creation==
      */
     unsigned char n_symbols = huffman_table.size();
+    
+    #ifdef DEBUG
+        std::cout << "encode()" << std::endl;
+        std::cout << "n_symbols: " << (int) n_symbols << std::endl;
+    #endif
+
     output.write(reinterpret_cast<char*>(&n_symbols), sizeof(unsigned char));
 
     for (const auto &keyValue : huffman_table) {
         char symbol = keyValue.first;
-        output.write(&symbol, sizeof(char));
+        #ifdef DEBUG
+            std::cout << "symbol: " << symbol << std::endl;
+        #endif
+        output.write(reinterpret_cast<char*>(&symbol), sizeof(char));
         for (int i = 0; i < node_array_size; i++) {
             if (node_array[i]->byte == keyValue.first){
-                unsigned short frequency = node_array[i]->frequency;
-                output.write(reinterpret_cast<char*>(&frequency), sizeof(unsigned short));
+                // FREQUENCY here
+                unsigned char frequency = node_array[i]->frequency;
+
+                #ifdef DEBUG
+                    std::cout << "frequency: " << (int) frequency << std::endl;
+                #endif
+
+                output.write(reinterpret_cast<char*>(&frequency), sizeof(unsigned char));
                 break;
             }
         }
@@ -83,25 +97,29 @@ void HuffmanCompressor::encode(std::string source) {
      * ==Data encoding==
      */
 
+    int byte_size = 0;
+    unsigned char byte_writed = 0;
+
     while (input >> byte_readed) {
         std::string code = huffman_table[byte_readed];
+
         for (int i = 0; i < code.size(); i++) {
-            if (byte_size == 0) {
-                output << byte_writed;
-                byte_writed = 0;
+            if (byte_size == 8) {
+                output.write(reinterpret_cast<char*>(&byte_writed), sizeof(unsigned char));
                 byte_size = 0;
+                byte_writed = 0;
             }
-            if (code[i] == 1){
-                byte_writed++;
+            
+            if (code[i] == '1') {
+                byte_writed ^= (ONE >> byte_size);
             }
-            byte_writed << 1;
-            byte_size--;
+            byte_size++;
         }
+        
     }
+    
     input.close();
     output.close();
-
-    // TODO: Remove clear when the algorithm is tested
 }
 
 

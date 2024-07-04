@@ -11,6 +11,9 @@
 // Maximum of 128 TreeNode pointers
 #define MAX_NODE_ARRAY_LENGTH 128
 
+#define ONE  0b1000'0000
+#define ZERO 0b0000'0000
+
 class Huffman {
     protected:
         std::string source;

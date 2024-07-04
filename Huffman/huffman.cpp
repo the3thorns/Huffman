@@ -28,7 +28,7 @@ void Huffman::create_tree() {
         z->left = t1;
         z->right = t2;
 
-        // insert_into_array(z);
+        insert_into_array(z);
         priority_queue.push(z);
     }
 
@@ -64,6 +64,10 @@ void Huffman::create_priority_queue() {
     source_file.close();
 
     // Add elements in priority queue
+
+    #ifdef DEBUG
+        std::cout << "create_priority_queue()" << std::endl;
+    #endif
 
     for (int i = 0; i < node_array_size; i++) {
         #ifdef DEBUG
