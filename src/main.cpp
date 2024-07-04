@@ -9,10 +9,10 @@
 int main(void) {    
 
     HuffmanCompressor compressor;
-    compressor.encode("test.txt");
+    compressor.encode("test.txt", "Encoded.huf");
 
     HuffmanDecompressor decompressor;
-    decompressor.decode("Encoded.huf");
+    decompressor.decode("Encoded.huf", "Result.txt");
 
     return 0;
 }

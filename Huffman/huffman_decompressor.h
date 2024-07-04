@@ -12,11 +12,16 @@
 #define MAX_NODE_ARRAY_LENGTH 128
 
 class HuffmanDecompressor : Huffman { 
+    private:
+        unsigned int effective_bits;
     public:
         /**
          * Reads the header and rebuilds the Huffman Tree
          */
-        void decode(std::string source);
+        void decode(std::string input, std::string output);
+
+        void read_header();
+        void read_data();
 };
 
 #endif // HUFFMAN_DECOMPRESSOR_H_

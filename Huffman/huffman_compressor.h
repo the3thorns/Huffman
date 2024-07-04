@@ -21,7 +21,7 @@
 class HuffmanCompressor : public Huffman {
     private:
         std::unordered_map<char, std::string> huffman_table;
-        
+        int frequency_array[MAX_NODE_ARRAY_LENGTH];
         void create_huffman_table(TreeNode* node, std::string code);
 
     public:
@@ -41,7 +41,10 @@ class HuffmanCompressor : public Huffman {
          * Step 3: create_huffman_table()
          * Step 4: output the encoded file into a compressed one (compressed.huf)
          */
-        void encode(std::string source);
+        void create_priority_queue(std::string input);
+        void encode(std::string input, std::string output);
+        void write_header();
+        void write_data();
 };
 
 
