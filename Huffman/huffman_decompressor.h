@@ -14,14 +14,15 @@
 class HuffmanDecompressor : Huffman { 
     private:
         unsigned int effective_bits;
+
+        void read_header();
+        void read_data();
     public:
         /**
          * Reads the header and rebuilds the Huffman Tree
          */
         void decode(std::string input, std::string output);
 
-        void read_header();
-        void read_data();
         // void check_tree_codes();
         // void check_tree_codes(TreeNode* tn, std::string code);
 };

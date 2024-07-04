@@ -37,12 +37,13 @@ class Huffman {
         std::vector<TreeNode*> node_array;
         std::priority_queue<TreeNode*, std::vector<TreeNode*>, CompareTreeNode> priority_queue;
         TreeNode* root;
+        void create_tree();
 
     public:
         Huffman();
         ~Huffman();
 
-        void create_tree();
+        
         // void create_priority_queue();
         // void insert_into_array(TreeNode* tn);
 
