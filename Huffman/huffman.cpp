@@ -4,7 +4,7 @@
 
 Huffman::Huffman(){
     root = nullptr;
-    node_array_size = 0;
+    // node_array_size = 0;
 }
 
 Huffman::~Huffman() {
@@ -28,7 +28,7 @@ void Huffman::create_tree() {
         z->left = t1;
         z->right = t2;
 
-        insert_into_array(z);
+        node_array.push_back(z);
         priority_queue.push(z);
     }
 
@@ -38,10 +38,10 @@ void Huffman::create_tree() {
 
 
 
-void Huffman::insert_into_array(TreeNode* tn) {
-    node_array[node_array_size] = tn;
-    node_array_size++;
-}
+// void Huffman::insert_into_array(TreeNode* tn) {
+//     node_array[node_array_size] = tn;
+//     node_array_size++;
+// }
 
 void Huffman::clear() {
     // TODO

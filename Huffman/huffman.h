@@ -4,10 +4,11 @@
 #include "tree_node.h"
 #include <string>
 #include <queue>
+#include <vector>
 #include <fstream>
 
 // Macro used to compile debug statements
-#define DEBUG
+// #define DEBUG
 
 // Maximum of 128 TreeNode pointers
 #define MAX_NODE_ARRAY_LENGTH 128
@@ -31,8 +32,9 @@ class Huffman {
         // std::string source;
         std::fstream input;
         std::fstream output;
-        TreeNode* node_array[MAX_NODE_ARRAY_LENGTH];
-        int node_array_size;
+        // TreeNode* node_array[MAX_NODE_ARRAY_LENGTH];
+        // int node_array_size;
+        std::vector<TreeNode*> node_array;
         std::priority_queue<TreeNode*, std::vector<TreeNode*>, CompareTreeNode> priority_queue;
         TreeNode* root;
 
@@ -42,7 +44,7 @@ class Huffman {
 
         void create_tree();
         // void create_priority_queue();
-        void insert_into_array(TreeNode* tn);
+        // void insert_into_array(TreeNode* tn);
 
         void clear(); // TODO
 };

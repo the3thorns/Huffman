@@ -6,13 +6,9 @@
 #include <iostream>
 
 
-/**
- * HUFFMAN COMPRESSOR
- */
-
 HuffmanCompressor::HuffmanCompressor() {
     root = nullptr;
-    node_array_size = 0;
+    // node_array_size = 0;
 }
 
 HuffmanCompressor::~HuffmanCompressor() {
@@ -41,9 +37,10 @@ void HuffmanCompressor::create_priority_queue(std::string input) {
 
     source_file.open(input);
 
-    while (source_file >> byte_readed) {
+    source_file.get(byte_readed);
+    while (!source_file.eof()) {
         bool found = false;
-        for (i = 0; i < node_array_size; i++) {
+        for (i = 0; i < node_array.size(); i++) {
             if (node_array[i]->byte == byte_readed) {
                 node_array[i]->frequency++;
                 found = true;
@@ -54,9 +51,10 @@ void HuffmanCompressor::create_priority_queue(std::string input) {
         // Adds new node
         if (!found) {
             TreeNode* ptn = new TreeNode(byte_readed, 1);
-            node_array[node_array_size] = ptn;
-            node_array_size++;
+            node_array.push_back(ptn);
+            // node_array_size++;
         }
+        source_file.get(byte_readed);
     }
     source_file.close();
 
@@ -66,7 +64,7 @@ void HuffmanCompressor::create_priority_queue(std::string input) {
         std::cout << "create_priority_queue()" << std::endl;
     #endif
 
-    for (int i = 0; i < node_array_size; i++) {
+    for (int i = 0; i < node_array.size(); i++) {
         #ifdef DEBUG
             std::cout << node_array[i]->byte << ": " << (int) node_array[i]->frequency << std::endl;
         #endif
@@ -109,68 +107,6 @@ void HuffmanCompressor::encode(std::string input, std::string output) {
         write_data();
     }
     
-
-    // char byte_readed;
-
-    /**
-     * ==Header creation==
-     */
-
-    // unsigned char n_symbols = huffman_table.size();
-    
-    // #ifdef DEBUG
-    //     std::cout << "encode()" << std::endl;
-    //     std::cout << "n_symbols: " << (int) n_symbols << std::endl;
-    // #endif
-
-    // output.write(reinterpret_cast<char*>(&n_symbols), sizeof(unsigned char));
-
-    // for (const auto &keyValue : huffman_table) {
-    //     char symbol = keyValue.first;
-    //     #ifdef DEBUG
-    //         std::cout << "symbol: " << symbol << std::endl;
-    //     #endif
-    //     output.write(reinterpret_cast<char*>(&symbol), sizeof(char));
-    //     for (int i = 0; i < node_array_size; i++) {
-    //         if (node_array[i]->byte == keyValue.first){
-    //             // FREQUENCY here
-    //             unsigned char frequency = node_array[i]->frequency;
-
-    //             #ifdef DEBUG
-    //                 std::cout << "frequency: " << (int) frequency << std::endl;
-    //             #endif
-
-    //             output.write(reinterpret_cast<char*>(&frequency), sizeof(unsigned char));
-    //             break;
-    //         }
-    //     }
-    // }
-
-    /**
-     * ==Data encoding==
-     */
-
-    // int byte_size = 0;
-    // unsigned char byte_writed = 0;
-
-    // while (input >> byte_readed) {
-    //     std::string code = huffman_table[byte_readed];
-
-    //     for (int i = 0; i < code.size(); i++) {
-    //         if (byte_size == 8) {
-    //             output.write(reinterpret_cast<char*>(&byte_writed), sizeof(unsigned char));
-    //             byte_size = 0;
-    //             byte_writed = 0;
-    //         }
-            
-    //         if (code[i] == '1') {
-    //             byte_writed ^= (ONE >> byte_size);
-    //         }
-    //         byte_size++;
-    //     }
-        
-    // }
-    
     this->input.close();
     this->output.close();
 }
@@ -183,16 +119,13 @@ void HuffmanCompressor::write_header() {
     
     unsigned int effective_bits = 0;
 
-    for (const auto &keyValue : huffman_table) {
-        for (int i = 0; i < node_array_size;i++) {
-            if (node_array[i]->byte == keyValue.first) {
-                effective_bits += node_array[i]->frequency * keyValue.second.size();
-                field.frequency = node_array[i]->frequency;
-                break;
-            }
+    for (int i = 0; i < node_array.size(); i++) {
+        if (node_array[i]->byte != -1) {
+            field.byte = node_array[i]->byte;
+            field.frequency = node_array[i]->frequency;
+            effective_bits += node_array[i]->frequency * huffman_table[node_array[i]->byte].size();
+            output.write(reinterpret_cast<char*>(&field), sizeof(HeaderField));
         }
-        field.byte = keyValue.first;
-        output.write(reinterpret_cast<char*>(&field), sizeof(HeaderField));
     }
 
     output.write(reinterpret_cast<char*>(&effective_bits), sizeof(unsigned int));
@@ -236,7 +169,7 @@ void HuffmanCompressor::write_data() {
             }
             byte_size++;
         }
-        input.get(byte_readed);
+        input.read(reinterpret_cast<char*>(&byte_readed), sizeof(char));
     }
 
     if (input.eof() && byte_size > 0) {
@@ -251,5 +184,3 @@ void HuffmanCompressor::write_data() {
         std::cout << "Number of bytes writed: " << writed << std::endl;
     #endif
 }
-
-

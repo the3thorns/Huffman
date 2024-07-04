@@ -11,90 +11,14 @@ void HuffmanDecompressor::decode(std::string input, std::string output) {
 
     if (this->input.is_open() && this->output.is_open()) {
         read_header();
+
+        #ifdef DEBUG
+            std::cout << std::endl;
+            check_tree_codes();
+        #endif
+
         read_data();
     }
-
-
-    // unsigned char n_symbols;
-
-    // char byte_readed = 0;
-    // unsigned char frequency = 0;
-
-    
-    // /**
-    //  * ==Read Header==
-    //  */
-
-    // input.read(reinterpret_cast<char*>(&n_symbols), sizeof(unsigned char));
-
-    // #ifdef DEBUG
-    //     std::cout << "decode()" << std::endl;
-    //     std::cout << "n_symbols: " << (int) n_symbols << std::endl;
-    // #endif
-    
-    // #ifdef DEBUG
-    //     std::cout << "for loop" << std::endl; 
-    // #endif
-
-    // for (int i = 0; i < n_symbols; i++) {
-    //     input.read(reinterpret_cast<char*>(&byte_readed), sizeof(char));
-    //     input.read(reinterpret_cast<char*>(&frequency), sizeof(unsigned char));
-
-    //     #ifdef DEBUG
-    //         std::cout << byte_readed << ": " << (int) frequency << std::endl;
-    //     #endif
-        
-    //     TreeNode* tn = new TreeNode(byte_readed, frequency);
-    //     insert_into_array(tn);
-    //     priority_queue.push(tn);
-    // }
-
-    // /**
-    //  * ==Build Tree==
-    //  */
-
-    // // ! WRONG: create_priority_queue() crea el vector node_array y añade los nodos a la priority queue
-    // //create_priority_queue();
-
-    // create_tree();
-
-    /**
-     * ==Read file and match bits wtih tree==
-     */
-
-    // TreeNode* aux = root;
-    // unsigned char byte_size = 8;
-
-    // // Left -> 0; Right -> 1
-
-    // while (input.read(reinterpret_cast<char*>(&byte_readed), sizeof(char))) {
-    //     for (int i = 0; i < byte_size; i++) {
-
-    //         #ifdef DEBUG
-    //             std::cout << "byte_readed: " << byte_readed << std::endl;
-    //         #endif
-
-    //         if ((byte_readed & ONE) == ONE) {
-    //             aux = aux->right;
-    //         } else {
-    //             aux = aux->left;
-    //         }
-
-    //         #ifdef DEBUG
-    //             std::cout << "And operation: " << (byte_readed & ONE) << std::endl;
-    //             std::cout << "Byte in aux node: " << aux->byte << std::endl;
-    //         #endif 
-
-    //         if (aux->isLeaf()){
-    //             #ifdef DEBUG
-    //                 std::cout << "Escribe" << std::endl;
-    //             #endif
-    //             output << aux->byte;
-    //             aux = root;
-    //         }
-    //         byte_readed <<= 1;
-    //     }
-    // }
 
     this->input.close();
     this->output.close();
@@ -109,8 +33,12 @@ void HuffmanDecompressor::read_header() {
     for (int i = 0; i < n_symbols; i++) {
         input.read(reinterpret_cast<char*>(&field), sizeof(HeaderField));
         tn = new TreeNode(field.byte, field.frequency);
-        insert_into_array(tn);
+        node_array.push_back(tn);
         priority_queue.push(tn);
+
+        #ifdef DEBUG
+            std::cout << field.byte << ": " << (int) field.frequency << std::endl;
+        #endif
     }
 
     input.read(reinterpret_cast<char*>(&effective_bits), sizeof(unsigned int));
@@ -122,36 +50,57 @@ void HuffmanDecompressor::read_data() {
 
     TreeNode* aux = root;
     char byte_readed;
+    char byte_position = 0;
+
+    #ifdef DEBUG
+        int writed = 0;
+    #endif
 
     // Left -> 0; Right -> 1
 
-    while (input.read(reinterpret_cast<char*>(&byte_readed), sizeof(char)) && effective_bits > 0) {
-        for (int i = 0; i < sizeof(char); i++) {
-
-            #ifdef DEBUG
-                std::cout << "byte_readed: " << byte_readed << std::endl;
-            #endif
-
+    while (input.read(reinterpret_cast<char*>(&byte_readed), sizeof(char))) {
+        while (byte_position < 8 && effective_bits > 0) {
             if ((byte_readed & ONE) == ONE) {
                 aux = aux->right;
             } else {
                 aux = aux->left;
             }
 
-            #ifdef DEBUG
-                std::cout << "And operation: " << (byte_readed & ONE) << std::endl;
-                std::cout << "Byte in aux node: " << aux->byte << std::endl;
-            #endif 
-
-            if (aux->isLeaf()){
+            if (aux->isLeaf()) {
                 #ifdef DEBUG
-                    std::cout << "Escribe: " << aux->byte << std::endl;
+                    std::cout << "Byte writed: " << aux->byte << std::endl;
+                    writed++;
                 #endif
-                output << aux->byte;
+                output.put(aux->byte);
                 aux = root;
             }
             byte_readed <<= 1;
+
+            byte_position++;
             effective_bits--;
         }
+        byte_position = 0;
     }
+
+    #ifdef DEBUG
+        std::cout << "Bytes writed: " << writed << std::endl;
+        std::cout << "Effective bits: " << effective_bits << std::endl;
+        std::cout << "Byte position: " << (int) byte_position << std::endl;
+    #endif
+}
+
+void HuffmanDecompressor::check_tree_codes() {
+    if (root != nullptr) {
+        check_tree_codes(root, "");
+    }
+}
+
+void HuffmanDecompressor::check_tree_codes(TreeNode* tn, std::string code) {
+    if (tn->isLeaf()) {
+        std::cout << tn->byte << ": " << code << std::endl;
+        return;
+    }
+
+    check_tree_codes(tn->left, code + '0');
+    check_tree_codes(tn->right, code + '1');
 }
