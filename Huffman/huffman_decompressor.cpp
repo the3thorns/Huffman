@@ -122,12 +122,11 @@ void HuffmanDecompressor::read_data() {
 
     TreeNode* aux = root;
     char byte_readed;
-    unsigned char byte_size = 8;
 
     // Left -> 0; Right -> 1
 
     while (input.read(reinterpret_cast<char*>(&byte_readed), sizeof(char)) && effective_bits > 0) {
-        for (int i = 0; i < byte_size; i++) {
+        for (int i = 0; i < sizeof(char); i++) {
 
             #ifdef DEBUG
                 std::cout << "byte_readed: " << byte_readed << std::endl;

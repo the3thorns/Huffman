@@ -196,6 +196,11 @@ void HuffmanCompressor::write_header() {
     }
 
     output.write(reinterpret_cast<char*>(&effective_bits), sizeof(unsigned int));
+
+    #ifdef DEBUG
+        std::cout << "write_header()" << std::endl;
+        std::cout << "Effective bits: " << effective_bits << std::endl;
+    #endif
 }
 
 void HuffmanCompressor::write_data() {
@@ -203,14 +208,27 @@ void HuffmanCompressor::write_data() {
     int byte_size = 0;
     unsigned char byte_writed = 0;
 
-    while (input >> byte_readed) {
-        std::string code = huffman_table[byte_readed];
+    #ifdef DEBUG
+        int numberOf = 0;
+        int writed = 0;
+    #endif
 
+    input.get(byte_readed);
+    while (!input.eof()) {
+
+        std::string code = huffman_table[byte_readed];
+        #ifdef DEBUG
+            numberOf++;
+            std::cout << "Byte readed: " << byte_readed << std::endl;
+        #endif
         for (int i = 0; i < code.size(); i++) {
             if (byte_size == 8) {
                 output.write(reinterpret_cast<char*>(&byte_writed), sizeof(unsigned char));
                 byte_size = 0;
                 byte_writed = 0;
+                #ifdef DEBUG
+                    writed++;
+                #endif
             }
             
             if (code[i] == '1') {
@@ -218,7 +236,20 @@ void HuffmanCompressor::write_data() {
             }
             byte_size++;
         }
+        input.get(byte_readed);
     }
+
+    if (input.eof() && byte_size > 0) {
+        output.write(reinterpret_cast<char*>(&byte_writed), sizeof(unsigned char));
+        #ifdef DEBUG
+            writed++;
+        #endif
+    }
+
+    #ifdef DEBUG
+        std::cout << "Number of bytes readed: " << numberOf << std::endl;
+        std::cout << "Number of bytes writed: " << writed << std::endl;
+    #endif
 }
 
 
