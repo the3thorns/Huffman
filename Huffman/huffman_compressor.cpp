@@ -20,12 +20,12 @@ void HuffmanCompressor::create_huffman_table() { // WORKS
     if (root != nullptr) {
         create_huffman_table(root, "");
 
-        #ifdef DEBUG
-            for (const auto &keyValue : huffman_table) {
-                std::cout << keyValue.first << ": " << keyValue.second << std::endl;
-            }
-            std::cout << std::endl;
-        #endif
+        // #ifdef DEBUG
+        //     for (const auto &keyValue : huffman_table) {
+        //         std::cout << keyValue.first << ": " << keyValue.second << std::endl;
+        //     }
+        //     std::cout << std::endl;
+        // #endif
     }
 }
 
@@ -65,9 +65,9 @@ void HuffmanCompressor::create_priority_queue(std::string input) {
     #endif
 
     for (int i = 0; i < node_array.size(); i++) {
-        #ifdef DEBUG
-            std::cout << node_array[i]->byte << ": " << (int) node_array[i]->frequency << std::endl;
-        #endif
+        // #ifdef DEBUG
+        //     std::cout << node_array[i]->byte << ": " << (int) node_array[i]->frequency << std::endl;
+        // #endif
         priority_queue.push(node_array[i]);
     }
 
@@ -130,10 +130,10 @@ void HuffmanCompressor::write_header() {
 
     output.write(reinterpret_cast<char*>(&effective_bits), sizeof(unsigned int));
 
-    #ifdef DEBUG
-        std::cout << "write_header()" << std::endl;
-        std::cout << "Effective bits: " << effective_bits << std::endl;
-    #endif
+    // #ifdef DEBUG
+    //     std::cout << "write_header()" << std::endl;
+    //     std::cout << "Effective bits: " << effective_bits << std::endl;
+    // #endif
 }
 
 void HuffmanCompressor::write_data() {
@@ -179,8 +179,8 @@ void HuffmanCompressor::write_data() {
         #endif
     }
 
-    #ifdef DEBUG
-        std::cout << "Number of bytes readed: " << numberOf << std::endl;
-        std::cout << "Number of bytes writed: " << writed << std::endl;
-    #endif
+    // #ifdef DEBUG
+    //     std::cout << "Number of bytes readed: " << numberOf << std::endl;
+    //     std::cout << "Number of bytes writed: " << writed << std::endl;
+    // #endif
 }

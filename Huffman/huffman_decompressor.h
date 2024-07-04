@@ -22,8 +22,8 @@ class HuffmanDecompressor : Huffman {
 
         void read_header();
         void read_data();
-        void check_tree_codes();
-        void check_tree_codes(TreeNode* tn, std::string code);
+        // void check_tree_codes();
+        // void check_tree_codes(TreeNode* tn, std::string code);
 };
 
 #endif // HUFFMAN_DECOMPRESSOR_H_

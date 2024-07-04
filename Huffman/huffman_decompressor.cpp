@@ -12,10 +12,10 @@ void HuffmanDecompressor::decode(std::string input, std::string output) {
     if (this->input.is_open() && this->output.is_open()) {
         read_header();
 
-        #ifdef DEBUG
-            std::cout << std::endl;
-            check_tree_codes();
-        #endif
+        // #ifdef DEBUG
+        //     std::cout << std::endl;
+        //     // check_tree_codes();
+        // #endif
 
         read_data();
     }
@@ -58,8 +58,8 @@ void HuffmanDecompressor::read_data() {
 
     // Left -> 0; Right -> 1
 
-    while (input.read(reinterpret_cast<char*>(&byte_readed), sizeof(char))) {
-        while (byte_position < 8 && effective_bits > 0) {
+    while (input.read(reinterpret_cast<char*>(&byte_readed), sizeof(char)) && effective_bits > 0) {
+        while (byte_position < 8) {
             if ((byte_readed & ONE) == ONE) {
                 aux = aux->right;
             } else {
@@ -89,18 +89,18 @@ void HuffmanDecompressor::read_data() {
     #endif
 }
 
-void HuffmanDecompressor::check_tree_codes() {
-    if (root != nullptr) {
-        check_tree_codes(root, "");
-    }
-}
+// void HuffmanDecompressor::check_tree_codes() {
+//     if (root != nullptr) {
+//         check_tree_codes(root, "");
+//     }
+// }
 
-void HuffmanDecompressor::check_tree_codes(TreeNode* tn, std::string code) {
-    if (tn->isLeaf()) {
-        std::cout << tn->byte << ": " << code << std::endl;
-        return;
-    }
+// void HuffmanDecompressor::check_tree_codes(TreeNode* tn, std::string code) {
+//     if (tn->isLeaf()) {
+//         std::cout << tn->byte << ": " << code << std::endl;
+//         return;
+//     }
 
-    check_tree_codes(tn->left, code + '0');
-    check_tree_codes(tn->right, code + '1');
-}
+//     check_tree_codes(tn->left, code + '0');
+//     check_tree_codes(tn->right, code + '1');
+// }
