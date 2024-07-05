@@ -59,7 +59,7 @@ void HuffmanDecompressor::read_data() {
     // Left -> 0; Right -> 1
 
     while (input.read(reinterpret_cast<char*>(&byte_readed), sizeof(char)) && effective_bits > 0) {
-        while (byte_position < 8) {
+        while (byte_position < 8 && effective_bits > 0) {
             if ((byte_readed & ONE) == ONE) {
                 aux = aux->right;
             } else {
