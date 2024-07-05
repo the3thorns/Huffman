@@ -165,7 +165,7 @@ void HuffmanCompressor::write_data() {
             }
             
             if (code[i] == '1') {
-                byte_writed ^= (ONE >> byte_size);
+                byte_writed |= (ONE >> byte_size);
             }
             byte_size++;
         }

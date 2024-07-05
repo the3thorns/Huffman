@@ -3,7 +3,7 @@
 
 typedef struct TreeNode {
     char byte;
-    unsigned char frequency;
+    unsigned int frequency;
     TreeNode* left;
     TreeNode* right;
 

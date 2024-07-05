@@ -8,7 +8,7 @@
 #include <fstream>
 
 // Macro used to compile debug statements
-#define DEBUG
+// #define DEBUG
 
 // Maximum of 128 TreeNode pointers
 #define MAX_NODE_ARRAY_LENGTH 128
@@ -24,7 +24,7 @@
 
 typedef struct HeaderField{
     char byte;
-    char frequency;
+    unsigned int frequency;
 }HeaderField;
 
 class Huffman {
